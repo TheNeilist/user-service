@@ -42,6 +42,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByAuthToken(String token) {
+        return userRepository.findByAuthToken(token);
+    }
+
+    @Override
     public void saveUser(User user) {
 
         if (user.getRoles() != null) {

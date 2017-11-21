@@ -14,6 +14,8 @@ public interface UserService {
 
     public User findByUsername(String username);
 
+    public User findByAuthToken(String token);
+
     public void saveUser(User user);
 
     public void deleteUserById(Long userId);
