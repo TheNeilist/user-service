@@ -15,12 +15,12 @@ import java.util.stream.Collectors;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    UserRepository users;
+    UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        final User user = users.findByUsername(username);
+        final User user = userRepository.findByUsername(username);
         if (user == null){
             throw new UsernameNotFoundException(username + " was not found");
         }
