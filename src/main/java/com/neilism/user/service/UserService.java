@@ -18,6 +18,8 @@ public interface UserService {
 
     public void saveUser(User user);
 
-    public void deleteUserById(Long userId);
+    public void deleteById(Long userId);
+
+    public void deleteByUsername(String username);
 
 }

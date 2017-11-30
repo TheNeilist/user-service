@@ -25,8 +25,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().addFilterBefore(userAuthenticationFilter, BasicAuthenticationFilter.class)
+        http.csrf().disable()
+                .addFilterBefore(userAuthenticationFilter, BasicAuthenticationFilter.class)
                 .authorizeRequests()
+                .antMatchers("/user").hasRole("ADMIN")
                 .antMatchers("/user/**").hasRole("ADMIN")
                 .anyRequest().authenticated();
     }

@@ -1,8 +1,8 @@
 package com.neilism.user.configuration;
 
 import com.neilism.user.model.User;
-import com.neilism.user.model.UserAuthentication;
-import com.neilism.user.model.UserContext;
+import com.neilism.user.model.security.UserAuthentication;
+import com.neilism.user.model.security.UserContext;
 import com.neilism.user.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,24 +30,29 @@ public final class UserAuthenticationFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+        //TODO:
+        //refactor to set a token here then create a provider to do the authentication
+        //http://shout.setfive.com/2015/11/02/spring-boot-authentication-with-custom-http-header/
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         final String authorization = httpRequest.getHeader(HEADER_AUTHORIZATION);
         final String token = httpRequest.getHeader(HEADER_TOKEN);
         Optional<User> userOptional = Optional.empty();
-        if (authorization != null) {
+        if (token != null) {
+            userOptional = authService.getUserTokenAuth(token);
+        } else if (authorization != null) {
             userOptional = authService.getUserBasicAuth(authorization);
             userOptional.ifPresent(user -> httpResponse.setHeader(HEADER_TOKEN, user.getAuthToken()));
         }
-        if (token != null) {
-            userOptional = authService.getUserTokenAuth(token);
-        }
+
         if (!userOptional.isPresent()) {
             httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        } else {
+            SecurityContextHolder.getContext()
+                    .setAuthentication(new UserAuthentication(new UserContext(userOptional.get()), true));
+            chain.doFilter(request, response);
         }
-        SecurityContextHolder.getContext()
-                .setAuthentication(new UserAuthentication(new UserContext(userOptional.get()), true));
-        chain.doFilter(request, response);
+
     }
 
 }

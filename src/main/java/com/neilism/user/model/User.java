@@ -2,10 +2,10 @@
 package com.neilism.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.neilism.user.model.command.UserCommand;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.data.annotation.Transient;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -28,9 +28,9 @@ public class User {
     @Email(message = "Invalid email.")
     @NotEmpty(message = "Email is required.")
     private String email;
-    @Column(name = "first_name")
+    @Column(name = "firstName")
     @NotEmpty(message = "First name is required.")
-    private String first_name;
+    private String firstName;
     @Column(name = "last_name")
     @NotEmpty(message = "Last name is required.")
     private String lastName;
@@ -40,12 +40,11 @@ public class User {
     @Column(name = "password")
     @Length(min = 5, message = "Password must have at least 5 characters.")
     @NotEmpty(message = "Password is required.")
-    @Transient
     @JsonIgnore
     private String password;
     @Column(name = "active")
     private boolean active;
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
     @Column(name = "auth_token")
@@ -58,9 +57,9 @@ public class User {
     public User() {
     }
 
-    public User(String email, String first_name, String lastName, String username, String password, boolean active, Set<Role> roles) {
+    public User(String email, String firstName, String lastName, String username, String password, boolean active, Set<Role> roles) {
         this.email = email;
-        this.first_name = first_name;
+        this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         setPassword(password);
@@ -68,10 +67,10 @@ public class User {
         this.roles = roles;
     }
 
-    public User(Long id, String email, String first_name, String lastName, String username, String password, boolean active, Set<Role> roles, String authToken, Date authExpiration) {
+    public User(Long id, String email, String firstName, String lastName, String username, String password, boolean active, Set<Role> roles, String authToken, Date authExpiration) {
         this.id = id;
         this.email = email;
-        this.first_name = first_name;
+        this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
         setPassword(password);
@@ -79,6 +78,17 @@ public class User {
         this.roles = roles;
         this.authToken = authToken;
         this.authExpiration = authExpiration;
+    }
+
+    public User(UserCommand userCommand) {
+        this.id = userCommand.getId();
+        this.email = userCommand.getEmail();
+        this.firstName = userCommand.getFirstName();
+        this.lastName = userCommand.getLastName();
+        this.username = userCommand.getUsername();
+        setPassword(userCommand.getPassword());
+        this.active = userCommand.isActive();
+        this.roles = userCommand.getRoles();
     }
 
     public Long getId() {
@@ -97,12 +107,12 @@ public class User {
         this.email = email;
     }
 
-    public String getFirst_name() {
-        return first_name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {

@@ -28,7 +28,6 @@ public class AuthService {
         tokenizer = new StringTokenizer(credentials, ":");
         final String username = tokenizer.nextToken();
         final String password = tokenizer.nextToken();
-
         final User user = userService.findByUsername(username);
         if (user != null && User.PASSWORD_ENCODER.matches(password, user.getPassword())) {
             user.setAuthToken(generateAuthToken());
@@ -44,7 +43,6 @@ public class AuthService {
         //todo set auth expiration
         return Optional.ofNullable(user);
     }
-
 
     public String generateAuthToken() {
         return UUID.randomUUID().toString();

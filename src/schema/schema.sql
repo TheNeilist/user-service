@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `user_id` bigint NOT NULL AUTO_INCREMENT,
   `email` varchar(255) NOT NULL,
-  `first_name` varchar(255) NOT NULL,
+  `firstName` varchar(255) NOT NULL,
   `last_name` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL UNIQUE,
   `password` varchar(255) NOT NULL,

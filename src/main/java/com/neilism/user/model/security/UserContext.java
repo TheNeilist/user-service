@@ -1,5 +1,6 @@
-package com.neilism.user.model;
+package com.neilism.user.model.security;
 
+import com.neilism.user.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

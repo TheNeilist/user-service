@@ -5,11 +5,9 @@ import com.neilism.user.model.User;
 import com.neilism.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {
@@ -47,24 +45,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void saveUser(User user) {
-
         if (user.getRoles() != null) {
-            List<Long> roleIds = new ArrayList<>();
-            user.getRoles().forEach(r -> roleIds.add(r.getId()));
-            user.setRoles(new HashSet<Role>(roleService.findRolesByRoleIdList(roleIds)));
-        } else {
-            user.setRoles(new HashSet<Role>(Arrays.asList(roleService.findByRole(DEFAULT_ROLE))));
+            //lookup all roles by name in case some foo passes in a bogus role
+            Set<Role> roles = new HashSet<>();
+            Iterator<Role> roleIterator = user.getRoles().iterator();
+            while (roleIterator.hasNext()) {
+                Role role = roleIterator.next();
+                role = roleService.findByRole(role.getRole());
+                if (role != null) {
+                    roles.add(role);
+                } else {
+                    //todo: log unknown role
+                }
+            }
+            user.setRoles(roles);
         }
-
-        userRepository.save(user);
+        userRepository.saveAndFlush(user);
     }
 
     @Override
-    public void deleteUserById(Long userId) {
+    public void deleteById(Long userId) {
         userRepository.delete(userId);
     }
 
+    @Override
+    @Transactional
+    public void deleteByUsername(String username) {
+        userRepository.deleteByUsername(username);
+    }
 
 
 }
