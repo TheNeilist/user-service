@@ -1,4 +1,4 @@
-package com.neilism.user.configuration;
+package com.neilism.user.filter;
 
 import com.neilism.user.model.User;
 import com.neilism.user.model.security.UserAuthentication;
@@ -30,9 +30,6 @@ public final class UserAuthenticationFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        //TODO:
-        //refactor to set a token here then create a provider to do the authentication
-        //http://shout.setfive.com/2015/11/02/spring-boot-authentication-with-custom-http-header/
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         final String authorization = httpRequest.getHeader(HEADER_AUTHORIZATION);

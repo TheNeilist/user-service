@@ -1,5 +1,6 @@
 package com.neilism.user.configuration;
 
+import com.neilism.user.filter.UserAuthenticationFilter;
 import com.neilism.user.model.User;
 import com.neilism.user.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
